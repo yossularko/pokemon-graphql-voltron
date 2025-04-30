@@ -1,10 +1,10 @@
-import { Stack } from "expo-router";
+import { Slot } from "expo-router";
+import { Provider } from "jotai";
 
-export default function RootLayout() {
+export default function AppLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="details/[id]" options={{ headerTitle: "Details" }} />
-    </Stack>
+    <Provider>
+      <Slot />
+    </Provider>
   );
 }
