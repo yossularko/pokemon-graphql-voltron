@@ -1,11 +1,7 @@
-import { HeaderMain } from "@/components";
-import { loadingDetailAtom, pokemonDetailAtom } from "@/store/mainStore";
+import { HeaderDetail, HeaderMain } from "@/components";
 import { Stack } from "expo-router";
-import { useAtomValue } from "jotai";
 
 export default function AppLayout() {
-  const loading = useAtomValue(loadingDetailAtom);
-  const detail = useAtomValue(pokemonDetailAtom);
   return (
     <Stack>
       <Stack.Screen
@@ -17,7 +13,10 @@ export default function AppLayout() {
       />
       <Stack.Screen
         name="details/[id]"
-        options={{ headerTitle: `Detail ${loading ? "" : detail?.name || ""}` }}
+        options={{
+          headerTitle: "",
+          headerBackground: () => <HeaderDetail />,
+        }}
       />
       <Stack.Screen name="test-data" />
     </Stack>
