@@ -58,7 +58,7 @@ export default function Index() {
       <Link
         href={{
           pathname: "/details/[id]",
-          params: { id: "bacon" },
+          params: { id: 1 },
         }}
       >
         View detail

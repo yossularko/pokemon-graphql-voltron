@@ -16,7 +16,7 @@ export default function DetailsScreen() {
   const [speciesId, setSpeciesId] = useState(0);
 
   const { loading, error, data } = useQuery(GET_POKEMON_DETAIL, {
-    variables: { id: 1 },
+    variables: { id: Number(id) },
     client: client,
   });
 
@@ -35,6 +35,7 @@ export default function DetailsScreen() {
       if (data.pokemon_v2_pokemon !== 0) {
         const newData = data.pokemon_v2_pokemon[0];
         setSpeciesId(newData?.pokemon_v2_pokemonspecy?.id || 0);
+        setId(newData?.name || "");
       }
 
       console.log("data details: ", data);
@@ -46,10 +47,6 @@ export default function DetailsScreen() {
       console.log("data species: ", dataSpecies);
     }
   }, [dataSpecies]);
-
-  useEffect(() => {
-    setId(id as string);
-  }, [id]);
 
   if (loading || loadingSpecies) return <ActivityIndicator />;
   if (error || errorSpecies)
