@@ -9,6 +9,7 @@ export default function AppLayout() {
     <Stack>
       <Stack.Screen name="index" />
       <Stack.Screen name="details/[id]" options={{ headerTitle: `Detail ${detailId}` }} />
+      <Stack.Screen name="test-data" />
     </Stack>
   );
 }

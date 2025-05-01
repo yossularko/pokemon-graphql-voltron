@@ -19,6 +19,7 @@ export default function Index() {
       >
         View detail
       </Link>
+      <Link href="/test-data">Test Data</Link>
     </View>
   );
 }
