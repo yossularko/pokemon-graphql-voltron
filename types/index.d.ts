@@ -56,6 +56,12 @@ export type PokemonDetail = {
   name: string;
   height: number;
   weight: number;
+  pokemon_v2_pokemonsprites: [
+    {
+      sprites: PokemonSprites;
+      __typename: string;
+    }
+  ];
   pokemon_v2_pokemontypes: PokemonV2Pokemontypes[];
   pokemon_v2_pokemonstats: PokemonV2Pokemonstats[];
   pokemon_v2_pokemonabilities: PokemonV2Pokemonabilities[];

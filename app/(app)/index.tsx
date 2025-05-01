@@ -2,10 +2,9 @@ import client from "@/lib/apolloClient";
 import { PokemonList, PokemonSprites } from "@/types";
 import { GET_POKEMON_LIST } from "@/utils/queries/getPokemon";
 import { useQuery } from "@apollo/client";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo } from "react";
 import {
-  ActivityIndicator,
   FlatList,
   Image,
   ListRenderItem,

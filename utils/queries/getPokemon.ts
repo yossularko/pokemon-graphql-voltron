@@ -29,6 +29,9 @@ export const GET_POKEMON_DETAIL = gql`
       name
       height
       weight
+      pokemon_v2_pokemonsprites {
+        sprites
+      }
       pokemon_v2_pokemontypes {
         pokemon_v2_type {
           name
