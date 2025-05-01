@@ -105,6 +105,24 @@ export type PokemonDetail = {
   __typename: string;
 };
 
+export type PokemonDetailView = {
+  id: number;
+  name: string;
+  types: string[];
+  img_url: string;
+  img_cover_url: string;
+  stats: { name: string; base_stat: number }[];
+  flavor_text: string;
+  approx_height: string;
+  approx_weight: string;
+  catch_rate: string;
+  gender_ratio: { male: number; female: number };
+  growth_rate: string;
+  hatch_steps: number;
+  effort_values: string;
+  abilities: string[];
+};
+
 export type PokemonV2Pokemonspeciesflavortexts = {
   flavor_text: string;
   __typename: string;

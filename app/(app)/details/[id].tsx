@@ -8,14 +8,17 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import { detailIdAtom } from "../_layout";
 import { useQuery } from "@apollo/client";
 import {
   GET_POKEMON_DETAIL,
   GET_POKEMON_SPECIES_DETAIL,
 } from "@/utils/queries/getPokemon";
 import client from "@/lib/apolloClient";
-import { PokemonDetail, PokemonSpeciesDetail } from "@/types";
+import {
+  PokemonDetail,
+  PokemonDetailView,
+  PokemonSpeciesDetail,
+} from "@/types";
 import {
   convertHeight,
   convertWeight,
@@ -25,28 +28,13 @@ import {
   getImageCoverUrl,
   getImageUrl,
 } from "@/utils/myFunc";
-
-type NewPokemonDetail = {
-  id: number;
-  name: string;
-  types: string[];
-  img_url: string;
-  img_cover_url: string;
-  stats: { name: string; base_stat: number }[];
-  flavor_text: string;
-  approx_height: string;
-  approx_weight: string;
-  catch_rate: string;
-  gender_ratio: { male: number; female: number };
-  growth_rate: string;
-  hatch_steps: number;
-  effort_values: string;
-  abilities: string[];
-};
+import { loadingDetailAtom, pokemonDetailAtom } from "@/store/mainStore";
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
-  const setId = useSetAtom(detailIdAtom);
+  const setLoadingDetail = useSetAtom(loadingDetailAtom);
+  const setPokemonDetail = useSetAtom(pokemonDetailAtom);
+
   const [speciesId, setSpeciesId] = useState(0);
 
   const { loading, error, data } = useQuery<{
@@ -69,7 +57,7 @@ export default function DetailsScreen() {
     }
   );
 
-  const detail = useMemo<NewPokemonDetail | null>(() => {
+  const detail = useMemo<PokemonDetailView | null>(() => {
     if (!data) {
       return null;
     }
@@ -103,7 +91,7 @@ export default function DetailsScreen() {
 
     const effort_values = getEffortValues(newData.pokemon_v2_pokemonstats);
 
-    const newVal: NewPokemonDetail = {
+    const newVal: PokemonDetailView = {
       id: newData.id,
       name: newData.name,
       types: newData.pokemon_v2_pokemontypes.map((v) => v.pokemon_v2_type.name),
@@ -131,7 +119,6 @@ export default function DetailsScreen() {
       if (data.pokemon_v2_pokemon.length !== 0) {
         const newData = data.pokemon_v2_pokemon[0];
         setSpeciesId(newData?.pokemon_v2_pokemonspecy?.id || 0);
-        setId(newData?.name || "");
       }
 
       console.log("data details: ", data);
@@ -139,10 +126,14 @@ export default function DetailsScreen() {
   }, [data]);
 
   useEffect(() => {
-    if (dataSpecies) {
-      console.log("data species: ", dataSpecies);
+    if (loading) {
+      setPokemonDetail(null);
+    } else {
+      setPokemonDetail(detail);
     }
-  }, [dataSpecies]);
+
+    setLoadingDetail(loading);
+  }, [loading, detail]);
 
   if (loading || loadingSpecies) return <ActivityIndicator />;
   if (error || errorSpecies)
