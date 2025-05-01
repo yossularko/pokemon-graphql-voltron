@@ -2,9 +2,24 @@ import client from "@/lib/apolloClient";
 import { PokemonList, PokemonSprites } from "@/types";
 import { GET_POKEMON_LIST } from "@/utils/queries/getPokemon";
 import { useQuery } from "@apollo/client";
-import { Link } from "expo-router";
-import { useEffect, useMemo } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { Link, useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  ListRenderItem,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+type ListData = {
+  id: number;
+  name: string;
+  img_url: string;
+};
 
 const getImageUrl = (data: { sprites: PokemonSprites }[]): string => {
   if (!data) {
@@ -19,14 +34,16 @@ const getImageUrl = (data: { sprites: PokemonSprites }[]): string => {
 };
 
 export default function Index() {
-  const { loading, error, data } = useQuery<{
+  const router = useRouter();
+
+  const { loading, error, data, refetch } = useQuery<{
     pokemon_v2_pokemon: PokemonList[];
   }>(GET_POKEMON_LIST, {
     variables: { limit: 10, offset: 0 },
     client: client,
   });
 
-  const newData = useMemo(() => {
+  const newData = useMemo<ListData[]>(() => {
     if (!data) {
       return [];
     }
@@ -40,33 +57,48 @@ export default function Index() {
     return newVal;
   }, [data]);
 
+  const renderItem = useCallback<ListRenderItem<ListData>>(
+    ({ item }) => (
+      <TouchableOpacity
+        onPress={() =>
+          router.push({ pathname: "/details/[id]", params: { id: item.id } })
+        }
+        style={{
+          flexDirection: "row",
+          padding: 10,
+          alignItems: "center",
+          borderBottomWidth: 1,
+        }}
+      >
+        <Image
+          source={{ uri: item.img_url }}
+          style={{ width: 50, height: 50, marginRight: 10 }}
+        />
+        <Text>{item.name}</Text>
+      </TouchableOpacity>
+    ),
+    []
+  );
+
   useEffect(() => {
     if (newData) {
       console.log("data: ", newData);
     }
   }, [newData]);
 
-  if (loading) return <ActivityIndicator />;
+  // if (loading) return <ActivityIndicator />;
   if (error) return <Text>Error! {error.message}</Text>;
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Hello World</Text>
-      <Link
-        href={{
-          pathname: "/details/[id]",
-          params: { id: 1 },
-        }}
-      >
-        View detail
-      </Link>
-      <Link href="/test-data">Test Data</Link>
+    <View style={{ flex: 1, padding: 20 }}>
+      <FlatList
+        data={newData}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={refetch} />
+        }
+      />
     </View>
   );
 }
