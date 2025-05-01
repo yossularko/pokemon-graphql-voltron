@@ -9,7 +9,7 @@ import {
   GET_POKEMON_SPECIES_DETAIL,
 } from "@/utils/queries/getPokemon";
 import client from "@/lib/apolloClient";
-import { PokemonDetail, PokemonSpeciesDetail } from "@/types/indes";
+import { PokemonDetail, PokemonSpeciesDetail } from "@/types";
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();

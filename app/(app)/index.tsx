@@ -1,5 +1,5 @@
 import client from "@/lib/apolloClient";
-import { PokemonList, PokemonSprites } from "@/types/indes";
+import { PokemonList, PokemonSprites } from "@/types";
 import { GET_POKEMON_LIST } from "@/utils/queries/getPokemon";
 import { useQuery } from "@apollo/client";
 import { Link } from "expo-router";
