@@ -7,6 +7,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   ScrollView,
+  Image,
 } from "react-native";
 import { useQuery } from "@apollo/client";
 import {
@@ -29,6 +30,13 @@ import {
   getImageUrl,
 } from "@/utils/myFunc";
 import { loadingDetailAtom, pokemonDetailAtom } from "@/store/mainStore";
+import {
+  GenderRatio,
+  ListProfile,
+  ListStat,
+  LoadingDetail,
+} from "@/components";
+import { colors } from "@/utils/colors";
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -135,22 +143,121 @@ export default function DetailsScreen() {
     setLoadingDetail(loading);
   }, [loading, detail]);
 
-  if (loading || loadingSpecies) return <ActivityIndicator />;
+  if (loading || loadingSpecies) return <LoadingDetail />;
   if (error || errorSpecies)
     return <Text>Error! {error?.message || errorSpecies?.message}</Text>;
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        <Text style={{ maxWidth: 300 }}>{JSON.stringify(detail, null, 2)}</Text>
+    <View style={{ flex: 1 }}>
+      <ScrollView style={styles.container}>
+        {!detail ? null : (
+          <View style={{ gap: 16 }}>
+            <View style={[styles.card, { flexDirection: "row", gap: 20 }]}>
+              <Image
+                source={{ uri: detail.img_cover_url }}
+                resizeMode="contain"
+                style={{ width: 120, height: 120 }}
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.title} numberOfLines={1}>
+                  {detail.name}
+                </Text>
+                <View style={{ marginTop: 8 }}>
+                  <Text style={{ fontSize: 12, color: colors.label }}>
+                    {detail.flavor_text}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.card}>
+              <Text style={[styles.title, { fontSize: 16 }]} numberOfLines={1}>
+                Stats
+              </Text>
+              <View style={{ gap: 6, marginTop: 16 }}>
+                {detail.stats.map((v) => (
+                  <ListStat
+                    key={v.name}
+                    name={v.name}
+                    base_stat={v.base_stat}
+                  />
+                ))}
+              </View>
+            </View>
+            <View style={styles.card}>
+              <Text style={[styles.title, { fontSize: 16 }]} numberOfLines={1}>
+                Profile
+              </Text>
+              <View style={{ gap: 6, marginTop: 16 }}>
+                <ListProfile label="Approx. Height">
+                  <Text style={styles.textProfile}>{detail.approx_height}</Text>
+                </ListProfile>
+                <ListProfile label="Approx. Weight">
+                  <Text style={styles.textProfile}>{detail.approx_weight}</Text>
+                </ListProfile>
+                <ListProfile label="Catch Rate">
+                  <Text style={styles.textProfile}>{detail.catch_rate}</Text>
+                </ListProfile>
+                <ListProfile label="Gender Ratio">
+                  <GenderRatio
+                    female={detail.gender_ratio.female}
+                    male={detail.gender_ratio.male}
+                  />
+                </ListProfile>
+                <ListProfile label="Growth Rate">
+                  <Text
+                    style={[
+                      styles.textProfile,
+                      { textTransform: "capitalize" },
+                    ]}
+                  >
+                    {detail.growth_rate}
+                  </Text>
+                </ListProfile>
+                <ListProfile label="Hatch Steps">
+                  <Text style={styles.textProfile}>{detail.hatch_steps}</Text>
+                </ListProfile>
+                <ListProfile label="Effor Values">
+                  <Text
+                    style={[
+                      styles.textProfile,
+                      { textTransform: "capitalize" },
+                    ]}
+                  >
+                    {detail.effort_values}
+                  </Text>
+                </ListProfile>
+                <ListProfile label="Abilities">
+                  <Text
+                    style={[
+                      styles.textProfile,
+                      { textTransform: "capitalize" },
+                    ]}
+                  >
+                    {detail.abilities.join(", ")}
+                  </Text>
+                </ListProfile>
+              </View>
+            </View>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 14,
+  container: { paddingHorizontal: 14, paddingVertical: 20 },
+  card: {
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    borderRadius: 20,
+    backgroundColor: "white",
   },
+  title: {
+    color: colors.text,
+    fontSize: 24,
+    fontWeight: "500",
+    textTransform: "capitalize",
+  },
+  textProfile: { textAlign: "right", color: colors.text, fontWeight: "500" },
 });
