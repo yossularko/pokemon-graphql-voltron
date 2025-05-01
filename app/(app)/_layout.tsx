@@ -1,9 +1,15 @@
 import { HeaderDetail, HeaderMain } from "@/components";
+import { colors } from "@/utils/colors";
 import { Stack } from "expo-router";
 
 export default function AppLayout() {
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        statusBarBackgroundColor: colors.primary,
+        statusBarStyle: "light",
+      }}
+    >
       <Stack.Screen
         name="index"
         options={{
