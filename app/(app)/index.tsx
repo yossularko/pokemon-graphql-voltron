@@ -1,37 +1,34 @@
+import { NavPokemonItem, PokemonListItem } from "@/components";
 import client from "@/lib/apolloClient";
-import { PokemonList, PokemonSprites } from "@/types";
+import { PokemonList, PokemonListView } from "@/types";
 import { getImageUrl } from "@/utils/myFunc";
 import { GET_POKEMON_LIST } from "@/utils/queries/getPokemon";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   FlatList,
-  Image,
+  ImageBackground,
   ListRenderItem,
   RefreshControl,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 
-type ListData = {
-  id: number;
-  name: string;
-  img_url: string;
-};
+const limit = 10;
 
 export default function Index() {
   const router = useRouter();
+  const [offset, setOffset] = useState(0);
 
   const { loading, error, data, refetch } = useQuery<{
     pokemon_v2_pokemon: PokemonList[];
   }>(GET_POKEMON_LIST, {
-    variables: { limit: 10, offset: 0 },
+    variables: { limit: limit, offset: offset },
     client: client,
   });
 
-  const newData = useMemo<ListData[]>(() => {
+  const newData = useMemo<PokemonListView[]>(() => {
     if (!data) {
       return [];
     }
@@ -45,40 +42,39 @@ export default function Index() {
     return newVal;
   }, [data]);
 
-  const renderItem = useCallback<ListRenderItem<ListData>>(
+  const renderItem = useCallback<ListRenderItem<PokemonListView>>(
     ({ item }) => (
-      <TouchableOpacity
-        onPress={() =>
+      <PokemonListItem
+        item={item}
+        onNavigate={() =>
           router.push({ pathname: "/details/[id]", params: { id: item.id } })
         }
-        style={{
-          flexDirection: "row",
-          padding: 10,
-          alignItems: "center",
-          borderBottomWidth: 1,
-        }}
-      >
-        <Image
-          source={{ uri: item.img_url }}
-          style={{ width: 50, height: 50, marginRight: 10 }}
-        />
-        <Text>{item.name}</Text>
-      </TouchableOpacity>
+      />
     ),
     []
   );
 
-  useEffect(() => {
-    if (newData) {
-      console.log("data: ", newData);
-    }
-  }, [newData]);
+  const listFooterComponent = useCallback(() => {
+    return (
+      <NavPokemonItem
+        limit={limit}
+        offset={offset}
+        dataLength={data?.pokemon_v2_pokemon?.length || 0}
+        onPrev={() => setOffset((prev) => prev - limit)}
+        onNext={() => setOffset((prev) => prev + limit)}
+      />
+    );
+  }, [offset, data?.pokemon_v2_pokemon]);
 
   // if (loading) return <ActivityIndicator />;
   if (error) return <Text>Error! {error.message}</Text>;
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <ImageBackground
+      source={require("@/assets/images/bg2.png")}
+      resizeMode="cover"
+      style={{ flex: 1, overflow: "hidden" }}
+    >
       <FlatList
         data={newData}
         keyExtractor={(item) => item.id.toString()}
@@ -86,7 +82,10 @@ export default function Index() {
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={refetch} />
         }
+        ItemSeparatorComponent={() => <View style={{ height: 16 }} />}
+        ListFooterComponent={listFooterComponent}
+        style={{ paddingTop: 14, paddingHorizontal: 14, paddingBottom: 14 }}
       />
-    </View>
+    </ImageBackground>
   );
 }

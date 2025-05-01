@@ -47,6 +47,12 @@ export type PokemonList = {
   __typename: string;
 };
 
+export type PokemonListView = {
+  id: number;
+  name: string;
+  img_url: string;
+};
+
 export type PokemonV2Pokemontypes = {
   pokemon_v2_type: {
     name: string;
