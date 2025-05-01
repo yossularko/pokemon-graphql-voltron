@@ -11,10 +11,12 @@ const GenderRatio = ({ female, male }: Props) => {
   return (
     <View style={{ flexDirection: "row" }}>
       <View style={[styles.female, { width: `${female}%` }]}>
-        <Text style={styles.label}>{female}%</Text>
+        {female > 20 ? <Text style={styles.label}>{female}%</Text> : null}
       </View>
       <View style={styles.male}>
-        <Text style={[styles.label, { textAlign: "right" }]}>{male}%</Text>
+        {male > 20 ? (
+          <Text style={[styles.label, { textAlign: "right" }]}>{male}%</Text>
+        ) : null}
       </View>
     </View>
   );
