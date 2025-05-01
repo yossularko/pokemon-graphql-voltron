@@ -9,13 +9,16 @@ import {
   GET_POKEMON_SPECIES_DETAIL,
 } from "@/utils/queries/getPokemon";
 import client from "@/lib/apolloClient";
+import { PokemonDetail, PokemonSpeciesDetail } from "@/types/indes";
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
   const setId = useSetAtom(detailIdAtom);
   const [speciesId, setSpeciesId] = useState(0);
 
-  const { loading, error, data } = useQuery(GET_POKEMON_DETAIL, {
+  const { loading, error, data } = useQuery<{
+    pokemon_v2_pokemon: PokemonDetail[];
+  }>(GET_POKEMON_DETAIL, {
     variables: { id: Number(id) },
     client: client,
   });
@@ -24,15 +27,18 @@ export default function DetailsScreen() {
     loading: loadingSpecies,
     error: errorSpecies,
     data: dataSpecies,
-  } = useQuery(GET_POKEMON_SPECIES_DETAIL, {
-    variables: { speciesId: speciesId },
-    client: client,
-    skip: speciesId ? false : true,
-  });
+  } = useQuery<{ pokemon_v2_pokemonspecies: PokemonSpeciesDetail[] }>(
+    GET_POKEMON_SPECIES_DETAIL,
+    {
+      variables: { speciesId: speciesId },
+      client: client,
+      skip: speciesId ? false : true,
+    }
+  );
 
   useEffect(() => {
     if (data) {
-      if (data.pokemon_v2_pokemon !== 0) {
+      if (data.pokemon_v2_pokemon.length !== 0) {
         const newData = data.pokemon_v2_pokemon[0];
         setSpeciesId(newData?.pokemon_v2_pokemonspecy?.id || 0);
         setId(newData?.name || "");

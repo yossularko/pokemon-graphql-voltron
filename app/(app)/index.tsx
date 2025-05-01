@@ -1,11 +1,12 @@
 import client from "@/lib/apolloClient";
+import { PokemonList, PokemonSprites } from "@/types/indes";
 import { GET_POKEMON_LIST } from "@/utils/queries/getPokemon";
 import { useQuery } from "@apollo/client";
 import { Link } from "expo-router";
 import { useEffect, useMemo } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 
-const getImageUrl = (data: any): string => {
+const getImageUrl = (data: { sprites: PokemonSprites }[]): string => {
   if (!data) {
     return "";
   }
@@ -18,7 +19,9 @@ const getImageUrl = (data: any): string => {
 };
 
 export default function Index() {
-  const { loading, error, data } = useQuery(GET_POKEMON_LIST, {
+  const { loading, error, data } = useQuery<{
+    pokemon_v2_pokemon: PokemonList[];
+  }>(GET_POKEMON_LIST, {
     variables: { limit: 10, offset: 0 },
     client: client,
   });
@@ -28,7 +31,7 @@ export default function Index() {
       return [];
     }
 
-    const newVal = data.pokemon_v2_pokemon.map((val: any) => {
+    const newVal = data.pokemon_v2_pokemon.map((val) => {
       const { id, name, ...rest } = val;
       const img_url = getImageUrl(rest.pokemon_v2_pokemonsprites);
       return { id, name, img_url };
@@ -45,7 +48,7 @@ export default function Index() {
 
   if (loading) return <ActivityIndicator />;
   if (error) return <Text>Error! {error.message}</Text>;
-  
+
   return (
     <View
       style={{
