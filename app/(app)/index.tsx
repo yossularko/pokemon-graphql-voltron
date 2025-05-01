@@ -56,14 +56,17 @@ export default function Index() {
 
   const listFooterComponent = useCallback(() => {
     return (
-      <NavPokemonItem
-        limit={limit}
-        offset={offset}
-        dataLength={data?.pokemon_v2_pokemon?.length || 0}
-        loading={loading}
-        onPrev={() => setOffset((prev) => prev - limit)}
-        onNext={() => setOffset((prev) => prev + limit)}
-      />
+      <>
+        <NavPokemonItem
+          limit={limit}
+          offset={offset}
+          dataLength={data?.pokemon_v2_pokemon?.length || 0}
+          loading={loading}
+          onPrev={() => setOffset((prev) => prev - limit)}
+          onNext={() => setOffset((prev) => prev + limit)}
+        />
+        <View style={{ height: 80 }} />
+      </>
     );
   }, [offset, data?.pokemon_v2_pokemon, loading]);
 
