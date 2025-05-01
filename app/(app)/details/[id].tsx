@@ -16,7 +16,15 @@ import {
 } from "@/utils/queries/getPokemon";
 import client from "@/lib/apolloClient";
 import { PokemonDetail, PokemonSpeciesDetail } from "@/types";
-import { getFlavorText, getImageCoverUrl, getImageUrl } from "@/utils/myFunc";
+import {
+  convertHeight,
+  convertWeight,
+  getEffortValues,
+  getFlavorText,
+  getGenderRatio,
+  getImageCoverUrl,
+  getImageUrl,
+} from "@/utils/myFunc";
 
 type NewPokemonDetail = {
   id: number;
@@ -93,6 +101,8 @@ export default function DetailsScreen() {
       return { name, base_stat: v.base_stat };
     });
 
+    const effort_values = getEffortValues(newData.pokemon_v2_pokemonstats);
+
     const newVal: NewPokemonDetail = {
       id: newData.id,
       name: newData.name,
@@ -101,13 +111,13 @@ export default function DetailsScreen() {
       img_cover_url,
       stats,
       flavor_text,
-      approx_height: "",
-      approx_weight: "",
-      catch_rate: "",
-      gender_ratio: { male: 0, female: 0 },
-      growth_rate: "",
-      hatch_steps: 0,
-      effort_values: "",
+      approx_height: convertHeight(newData.height),
+      approx_weight: convertWeight(newData.weight),
+      catch_rate: `${newSpecies.capture_rate}%`,
+      gender_ratio: getGenderRatio(newSpecies.gender_rate),
+      growth_rate: newData.pokemon_v2_pokemonspecy.pokemon_v2_growthrate.name,
+      hatch_steps: newSpecies.hatch_counter * 255,
+      effort_values: effort_values.join(", "),
       abilities: newData.pokemon_v2_pokemonabilities.map(
         (v) => v.pokemon_v2_ability.name
       ),

@@ -61,6 +61,7 @@ export type PokemonV2Pokemonstats = {
     name: string;
     __typename: string;
   };
+  effort: number;
   __typename: string;
 };
 
@@ -74,6 +75,9 @@ export type PokemonV2Pokemonabilities = {
 
 export type PokemonV2Pokemonspecy = {
   id: number;
+  pokemon_v2_growthrate: {
+    name: string;
+  };
   __typename: string;
 };
 

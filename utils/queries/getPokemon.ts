@@ -21,10 +21,11 @@ export const GET_POKEMON_LIST = gql`
       }
     }
   }
-`
+`;
+
 export const GET_POKEMON_DETAIL = gql`
   query GetPokemonDetail($id: Int!) {
-    pokemon_v2_pokemon(where: {id: {_eq: $id}}) {
+    pokemon_v2_pokemon(where: { id: { _eq: $id } }) {
       id
       name
       height
@@ -42,6 +43,7 @@ export const GET_POKEMON_DETAIL = gql`
         pokemon_v2_stat {
           name
         }
+        effort
       }
       pokemon_v2_pokemonabilities {
         pokemon_v2_ability {
@@ -50,22 +52,28 @@ export const GET_POKEMON_DETAIL = gql`
       }
       pokemon_v2_pokemonspecy {
         id
+        pokemon_v2_growthrate {
+          name
+        }
       }
     }
   }
-`
+`;
 
 export const GET_POKEMON_SPECIES_DETAIL = gql`
   query GetPokemonSpeciesDetail($speciesId: Int!) {
-    pokemon_v2_pokemonspecies(where: {id: {_eq: $speciesId}}) {
+    pokemon_v2_pokemonspecies(where: { id: { _eq: $speciesId } }) {
       id
       capture_rate
       gender_rate
       growth_rate_id
       hatch_counter
-      pokemon_v2_pokemonspeciesflavortexts(where: {language_id: {_eq: 9}}, limit: 1) {
+      pokemon_v2_pokemonspeciesflavortexts(
+        where: { language_id: { _eq: 9 } }
+        limit: 1
+      ) {
         flavor_text
       }
     }
   }
-`
+`;
