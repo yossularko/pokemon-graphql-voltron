@@ -1,5 +1,6 @@
 import client from "@/lib/apolloClient";
 import { PokemonList, PokemonSprites } from "@/types";
+import { getImageUrl } from "@/utils/myFunc";
 import { GET_POKEMON_LIST } from "@/utils/queries/getPokemon";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "expo-router";
@@ -18,18 +19,6 @@ type ListData = {
   id: number;
   name: string;
   img_url: string;
-};
-
-const getImageUrl = (data: { sprites: PokemonSprites }[]): string => {
-  if (!data) {
-    return "";
-  }
-
-  if (data.length === 0) {
-    return "";
-  }
-
-  return data[0]?.sprites?.front_default || "";
 };
 
 export default function Index() {

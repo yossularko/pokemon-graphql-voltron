@@ -1,7 +1,13 @@
 import { useLocalSearchParams } from "expo-router";
 import { useSetAtom } from "jotai";
-import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import { detailIdAtom } from "../_layout";
 import { useQuery } from "@apollo/client";
 import {
@@ -10,6 +16,25 @@ import {
 } from "@/utils/queries/getPokemon";
 import client from "@/lib/apolloClient";
 import { PokemonDetail, PokemonSpeciesDetail } from "@/types";
+import { getFlavorText, getImageCoverUrl, getImageUrl } from "@/utils/myFunc";
+
+type NewPokemonDetail = {
+  id: number;
+  name: string;
+  types: string[];
+  img_url: string;
+  img_cover_url: string;
+  stats: { name: string; base_stat: number }[];
+  flavor_text: string;
+  approx_height: string;
+  approx_weight: string;
+  catch_rate: string;
+  gender_ratio: { male: number; female: number };
+  growth_rate: string;
+  hatch_steps: number;
+  effort_values: string;
+  abilities: string[];
+};
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -36,6 +61,61 @@ export default function DetailsScreen() {
     }
   );
 
+  const detail = useMemo<NewPokemonDetail | null>(() => {
+    if (!data) {
+      return null;
+    }
+
+    if (data.pokemon_v2_pokemon.length === 0) {
+      return null;
+    }
+
+    if (!dataSpecies) {
+      return null;
+    }
+
+    if (dataSpecies.pokemon_v2_pokemonspecies.length === 0) {
+      return null;
+    }
+
+    const newData = data.pokemon_v2_pokemon[0];
+    const newSpecies = dataSpecies.pokemon_v2_pokemonspecies[0];
+
+    const img_url = getImageUrl(newData.pokemon_v2_pokemonsprites);
+    const img_cover_url = getImageCoverUrl(newData.pokemon_v2_pokemonsprites);
+    const flavor_text = getFlavorText(
+      newSpecies.pokemon_v2_pokemonspeciesflavortexts
+    );
+
+    const stats = newData.pokemon_v2_pokemonstats.map((v) => {
+      const base_name = v.pokemon_v2_stat.name;
+      const name = base_name.replaceAll("special-", "sp. ");
+      return { name, base_stat: v.base_stat };
+    });
+
+    const newVal: NewPokemonDetail = {
+      id: newData.id,
+      name: newData.name,
+      types: newData.pokemon_v2_pokemontypes.map((v) => v.pokemon_v2_type.name),
+      img_url,
+      img_cover_url,
+      stats,
+      flavor_text,
+      approx_height: "",
+      approx_weight: "",
+      catch_rate: "",
+      gender_ratio: { male: 0, female: 0 },
+      growth_rate: "",
+      hatch_steps: 0,
+      effort_values: "",
+      abilities: newData.pokemon_v2_pokemonabilities.map(
+        (v) => v.pokemon_v2_ability.name
+      ),
+    };
+
+    return newVal;
+  }, [data, dataSpecies]);
+
   useEffect(() => {
     if (data) {
       if (data.pokemon_v2_pokemon.length !== 0) {
@@ -60,7 +140,9 @@ export default function DetailsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text>Details of user {id} </Text>
+      <ScrollView>
+        <Text style={{ maxWidth: 300 }}>{JSON.stringify(detail, null, 2)}</Text>
+      </ScrollView>
     </View>
   );
 }
@@ -68,7 +150,6 @@ export default function DetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 14,
   },
 });

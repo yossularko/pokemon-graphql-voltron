@@ -1,4 +1,30 @@
 export type PokemonSprites = {
+  other: {
+    home: {
+      front_shiny: string;
+      front_female: string | null;
+      front_default: string;
+      front_shiny_female: string | null;
+    };
+    showdown: {
+      back_shiny: string;
+      back_female: string | null;
+      front_shiny: string;
+      back_default: string;
+      front_female: string | null;
+      front_default: string;
+      back_shiny_female: string | null;
+      front_shiny_female: string | null;
+    };
+    dream_world: {
+      front_female: string | null;
+      front_default: string;
+    };
+    "official-artwork": {
+      front_shiny: string;
+      front_default: string;
+    };
+  };
   back_shiny: string;
   back_female: string | null;
   front_shiny: string;
