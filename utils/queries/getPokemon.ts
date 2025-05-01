@@ -10,3 +10,15 @@ export const GET_POKEMON = gql`
     }
   }
 `;
+
+export const GET_POKEMON_LIST = gql`
+  query GetPokemon($limit: Int!, $offset: Int!) {
+    pokemon_v2_pokemon(limit: $limit, offset: $offset) {
+      id
+      name
+      pokemon_v2_pokemonsprites {
+        sprites
+      }
+    }
+  }
+`
