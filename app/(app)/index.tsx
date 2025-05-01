@@ -60,11 +60,12 @@ export default function Index() {
         limit={limit}
         offset={offset}
         dataLength={data?.pokemon_v2_pokemon?.length || 0}
+        loading={loading}
         onPrev={() => setOffset((prev) => prev - limit)}
         onNext={() => setOffset((prev) => prev + limit)}
       />
     );
-  }, [offset, data?.pokemon_v2_pokemon]);
+  }, [offset, data?.pokemon_v2_pokemon, loading]);
 
   // if (loading) return <ActivityIndicator />;
   if (error) return <Text>Error! {error.message}</Text>;

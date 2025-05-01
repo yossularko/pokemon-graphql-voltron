@@ -1,4 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useMemo } from "react";
 import { colors } from "@/utils/colors";
 
@@ -6,6 +12,7 @@ type Props = {
   limit: number;
   offset: number;
   dataLength: number;
+  loading?: boolean;
   onPrev: () => void;
   onNext: () => void;
 };
@@ -14,6 +21,7 @@ const NavPokemonItem = ({
   limit,
   offset,
   dataLength,
+  loading,
   onPrev,
   onNext,
 }: Props) => {
@@ -35,20 +43,34 @@ const NavPokemonItem = ({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={[styles.button, { opacity: disablePrev ? 0.5 : 1 }]}
-        onPress={onPrev}
-        disabled={disablePrev}
-      >
-        <Text style={styles.buttonText}>Prev</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.button, { opacity: disableNext ? 0.5 : 1 }]}
-        onPress={onNext}
-        disabled={disableNext}
-      >
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
+      {loading ? (
+        <View
+          style={[
+            styles.button,
+            { opacity: 0.5, minWidth: 0, flexDirection: "row", gap: 4 },
+          ]}
+        >
+          <Text style={styles.buttonText}>Loading</Text>
+          <ActivityIndicator size="small" color="white" />
+        </View>
+      ) : (
+        <>
+          <TouchableOpacity
+            style={[styles.button, { opacity: disablePrev ? 0.5 : 1 }]}
+            onPress={onPrev}
+            disabled={disablePrev}
+          >
+            <Text style={styles.buttonText}>Prev</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, { opacity: disableNext ? 0.5 : 1 }]}
+            onPress={onNext}
+            disabled={disableNext}
+          >
+            <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
+        </>
+      )}
     </View>
   );
 };
